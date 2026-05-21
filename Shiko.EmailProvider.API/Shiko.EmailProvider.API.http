@@ -1,0 +1,6 @@
+@Shiko.EmailProvider.API_HostAddress = http://localhost:5033
+
+GET {{Shiko.EmailProvider.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
