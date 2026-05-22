@@ -1,5 +1,4 @@
-using Azure.Messaging.ServiceBus;
-using Azure.Communication.Email;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
