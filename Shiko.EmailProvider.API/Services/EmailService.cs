@@ -21,8 +21,10 @@ public class EmailService (
         {
             logger.LogInformation($"Sending verification email to {message.To}...");
 
+            var emailSubject = "Welcome to Shiko - Verify Your Account";
+
             // create content for email
-            var emailContent = new EmailContent(message.Subject)
+            var emailContent = new EmailContent(emailSubject)
             {
                 Html = $@"
               <table width='600' cellpadding='0' cellspacing='0'>

@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Azure;
 using Shiko.EmailProvider.API.Models;
 using Shiko.EmailProvider.API.Services;
 using System.Text.Json;
@@ -7,17 +8,20 @@ namespace Shiko.EmailProvider.API.Workers;
 
 public class EmailQueueSubscriber (
 
-    ServiceBusClient serviceBusClient,  //SDK client to communicate with the service bus
+    IAzureClientFactory<ServiceBusClient> clientFactory,  //SDK client to communicate with the service bus
     IConfiguration configuration,
     IServiceProvider serviceProvider,
     ILogger<EmailQueueSubscriber> logger) : BackgroundService
 
 {
-    // create a service bus processor with method from clilent and queue name from configuration
-    private readonly ServiceBusProcessor processor = serviceBusClient.CreateProcessor(
-         configuration["AzureServiceBus:QueueName"],
-         new ServiceBusProcessorOptions { AutoCompleteMessages = false }
-     );
+    // create a SERVICE BUS PROCESSOR with method from clilent and queue name from configuration - with clientfactory
+    private readonly ServiceBusProcessor processor = clientFactory
+        .CreateClient("ServiceBusClient") 
+        .CreateProcessor(
+            configuration["AzureServiceBus:QueueName"]
+                ?? throw new InvalidOperationException("QueueName is missing in configuration."),
+            new ServiceBusProcessorOptions { AutoCompleteMessages = false }
+        );
 
     // method to listen to Azure Service Bus using Service Bus Processor
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -33,9 +37,13 @@ public class EmailQueueSubscriber (
         await processor.StartProcessingAsync(ct);
 
         // keep service running until cancellation is requested
-        while (!ct.IsCancellationRequested)
+        try
         {
-            await Task.Delay(1000, ct); // "listen" to queue every 1 second, to keep the service alive.
+            await Task.Delay(Timeout.Infinite, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            // will throw this exception when cancellation is requested
         }
 
         // stop subscriber when cancellation is requested, but keep handle any messages that are still being processed before shutting down
@@ -66,7 +74,7 @@ public class EmailQueueSubscriber (
 
                 // SEND EMAIL!
                 // call method in email service to send email with emailRequest (data from message)
-                // await emailService.SendEmailAsync(emailRequest);
+                await emailService.SendEmailAsync(emailRequest);
 
                 logger.LogInformation($"Email sent to {emailRequest.To}!");
             }
