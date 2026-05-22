@@ -43,7 +43,7 @@ public class EmailService (
                </table>"
                   };
 
-            // create email message (
+            // create email message (default class from azure.communication.email)
             var emailMessage = new EmailMessage(
                 senderAddress: senderEmail,
                 recipientAddress: message.To,
