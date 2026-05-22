@@ -1,6 +1,8 @@
-﻿namespace Shiko.EmailProvider.API.Services;
+﻿using Shiko.EmailProvider.API.Models;
+
+namespace Shiko.EmailProvider.API.Services;
 
 public interface IEmailService
 {
-    Task<bool> SendVerificationEmailAsync(string toEmail, string verificationCode);
+    Task<bool> SendEmailAsync(EmailVerificationMessage message);
 }
