@@ -30,8 +30,8 @@ public class EmailServiceIntegrationTests
     }
 
    
-    [Fact] //(Skip = "Integrationtest - run manually")
-    public async Task SendEmailAsync_ShouldReturnTrue_WhenEmailIsSentSuccessfully()
+    [Fact] //(Skip = "Integrationtest - run manually") <- if adding unit tests, integration tests will not run auto
+    public async Task SendEmailAsync_ShouldReturnTrue_WhenEmailSentSuccessfully()
     {
         // ARRANGE 
         // create real message to send
@@ -39,7 +39,7 @@ public class EmailServiceIntegrationTests
         var message = new EmailVerificationMessage(
                  To: "tiwses@live.com",
                  VerificationCode: "123456"
- );
+           );
 
         // ACT 
         var result = await _emailService.SendEmailAsync(message);
@@ -48,5 +48,23 @@ public class EmailServiceIntegrationTests
         Assert.True(result);
     }
 
+
+    [Fact] //(Skip = "Integrationtest - run manually")
+    public async Task SendEmailAsync_ShouldReturnFalse_WhenRecipientIsInvalid()
+    {
+        // ARRANGE
+        // azure should thow an error when trying to send to an invalid email address -> service catches and returns false
+        var message = new EmailVerificationMessage(
+      
+            To: "not-a-valid-email",
+            VerificationCode: "123456"
+            
+        );
+        // ACT
+        var result = await _emailService.SendEmailAsync(message);
+
+        // ASSERT
+        Assert.False(result);
+    }
 
 }
