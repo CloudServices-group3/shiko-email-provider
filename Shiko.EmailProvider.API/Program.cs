@@ -1,4 +1,5 @@
 
+using Azure.Communication.Email;
 using Microsoft.Extensions.Azure;
 using Shiko.EmailProvider.API.Services;
 using Shiko.EmailProvider.API.Workers;
@@ -7,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Configuration.AddEnvironmentVariables();
+
+// add email client 
+builder.Services.AddSingleton(sp =>
+{
+    var connectionString = builder.Configuration["AzureCommunicationServices:ConnectionString"]
+        ?? throw new InvalidOperationException("ConnectionString is missing.");
+    return new EmailClient(connectionString);
+});
 
 //transient - creates a new instance of the service every time it is requested
 builder.Services.AddTransient<IEmailService, EmailService>();

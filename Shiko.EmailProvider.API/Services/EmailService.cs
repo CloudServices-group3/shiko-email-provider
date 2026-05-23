@@ -5,13 +5,10 @@ using Shiko.EmailProvider.API.Models;
 namespace Shiko.EmailProvider.API.Services;
 
 public class EmailService (
-    
+    EmailClient emailClient,
     IConfiguration configuration,
     ILogger<EmailService> logger) : IEmailService
 {
-    private readonly EmailClient emailClient = new(configuration["AzureCommunicationServices:ConnectionString"]
-         ?? throw new InvalidOperationException("ConnectionString is not configured."));
-
     private readonly string senderEmail = configuration["AzureCommunicationServices:SenderEmail"]
          ?? throw new InvalidOperationException("SenderEmail is not configured.");
 
