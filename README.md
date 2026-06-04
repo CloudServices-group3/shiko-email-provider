@@ -1,6 +1,7 @@
-# Shiko Email Provider API
+# Shiko Email Provider 
 
 Microservice responsible for sending verification emails to users registering in the Shiko system. Listens to an Azure Service Bus queue for incoming email verification messages and delivers them via Azure Communication Services (ACS).
+This service is deployed to Azure and runs as part of the Shiko microservices architecture.
 
 
 ## 🚀 Features
@@ -10,18 +11,8 @@ Microservice responsible for sending verification emails to users registering in
 - **Background Processing**: Runs as a hosted service, continuously listening for new messages without blocking the application.
 
 
-## 🛠️ Technologies
-
-- C# .NET 10 (ASP.NET Core)
-- Azure Communication Services (ACS) – Email
-- Azure Service Bus – Message queue
-- `Azure.Communication.Email` – Email client
-- `Microsoft.Extensions.Azure` – Azure client factory
-
-
-## 🏁 Getting Started
-
-This service is deployed to Azure and runs as part of the Shiko microservices architecture. For local development, follow the steps below.
-
-
 ## 🔗 Related Services
+
+**Shiko Verification API:** In charge of creating the verification code and publish message to Azure Service Bus.
+
+**Shiko Frontend:** [https://github.com/CloudServices-group3/shiko-frontend](https://github.com/CloudServices-group3/shiko-frontend) 
